@@ -1,0 +1,35 @@
+require 'rake'
+require 'net/http'
+
+
+desc 'Get the Enron data set'
+task :get_enron_data do
+  if File.exists?('mail_dir')
+    puts 'mail_dir already exists'
+    puts 'if you wish to recreate it please delete it and try again'
+    return
+  else
+    unless File.exists?('enron_mail_20150507.tgz')
+      sh 'wget http://www.cs.cmu.edu/~./enron/enron_mail_20150507.tgz' do |ok, res|
+        unless ok
+          puts 'wget not found, using rake to download'
+          puts 'this takes about 30 minutes with a good connection and you'
+          puts 'will not get a progress bar ...'
+          uri = URI('http://www.cs.cmu.edu/~./enron/enron_mail_20150507.tgz')
+          data_set = Net::HTTP.get(uri)
+
+          File.open('enron_mail_20150507.tgz', 'wb') do |file|
+            file.write(data_set)
+          end
+        end
+      end
+    end
+
+    # Using OS rather than ruby to untar; just easier for now.
+    sh 'tar -xvf enron_mail_20150507.tgz' do |ok, res|
+      unless ok
+        puts "Please install command line tar or extract manually"
+      end
+    end
+  end
+end
