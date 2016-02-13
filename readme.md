@@ -4,7 +4,7 @@ This repository is for use with the Massey University *158.739 Introduction to A
 
 ## Supported features
 
-None. At the moment the only thing this repository does is help you to get and extract the corpus:
+## Getting the dataset
 
 Try:
 
@@ -14,6 +14,10 @@ cd enron_corpus_analysis
 rake get_enron_data
 ```
 And hope that it works.
+
+## Parsing emails
+
+The repository contains a passing unit test which shows an example of parsing a single email. This implementation will be tested against the test fixture dataset in order to prepare for it to be launched against the entire dataset.
 
 # Discussion
 
