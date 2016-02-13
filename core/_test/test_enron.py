@@ -8,7 +8,7 @@ _test_fixture_count = 2195
 # If this changes be sure to update the readme.md for marketing purposes
 _expected_yield = 56
 
-_whitespace_regex = "[\r\n\t ]"
+_whitespace_regex = "[\s]"
 _fixture_dir = "core/_test_fixtures/maildir/"
 _simple_email_location = (
     _fixture_dir + "stokley-c/chris_stokley/mid_markt/19.")
@@ -107,14 +107,20 @@ class EmailParsing(unittest.TestCase):
         for fixture_location in self._get_test_fixture_list():
             with open(fixture_location) as f:
                 content = "".join(f.readlines())
+
             try:
                 email = enron._parse_email(fixture_location)
-                msg = enron._assemble_email_from_dict(email)
-                if (re.sub(_whitespace_regex, "", content) ==
-                        re.sub(_whitespace_regex, "", msg)):
-                    no_loss_of_data_count = no_loss_of_data_count + 1
-            except TypeError:
-                pass
+            except AssertionError:
+                # _parse_email() has identified this is a bad parse
+                continue
+            msg = enron._assemble_email_from_dict(email)
+            if (re.sub(_whitespace_regex, "", content) ==
+                    re.sub(_whitespace_regex, "", msg)):
+                no_loss_of_data_count = no_loss_of_data_count + 1
+            else:
+                # _parse_email() failed to identify a bad parse
+                self.fail("Returned corrupt message")
+
         parse_yield = float(no_loss_of_data_count)/_test_fixture_count * 100
 
         self.assertEqual(_expected_yield, int(parse_yield))
