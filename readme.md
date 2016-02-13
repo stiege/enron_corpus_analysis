@@ -27,8 +27,10 @@ The repository contains a passing unit test which shows an example of parsing a 
 
 [![Build Status](https://secure.travis-ci.org/stiege/enron_corpus_analysis.png)](http://travis-ci.org/stiege/enron_corpus_analysis)
 
-This repository tests with both python2 and python3. You must have `python2` and `python3` symlinked correctly or these values set as environmental variables on windows.
 
 ```bash
-rake test
+rake test      # Default python
+rake test2     # Python2
+rake test3     # Python3
+rake test_all  # Python2 and Python3
 ```

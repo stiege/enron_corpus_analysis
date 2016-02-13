@@ -44,4 +44,9 @@ task :test3 do
 end
 
 desc 'Run repository unit tests in python 2 and 3'
-task :test => ["test2", "test3"]
+task :test_all => ["test2", "test3"]
+
+desc 'Run repository unit tests with default python'
+task :test do
+  sh 'python -m unittest discover'
+end
