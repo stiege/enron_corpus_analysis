@@ -33,27 +33,37 @@ task :get_enron_data do
   end
 end
 
-desc 'Run repository unit tests in python2'
-task :test2 do
-  sh 'python2 -m unittest discover'
-end
+namespace :test do
 
-desc 'Run repository unit tests in python3'
-task :test3 do
-  sh 'python3 -m unittest discover'
-end
+  _test_command = "-m unittest discover"
 
-desc 'Run repository unit tests in python 2 and 3'
-task :test_all => ["test2", "test3"]
+  desc 'Run unit tests in python 2 and 3'
+  task :all => ["test:py2", "test:py3"]
 
-desc 'Run repository unit tests with default python'
-task :test do
-  sh 'python -m unittest discover'
+  desc 'Run unit tests in python 2'
+  task :py2 do
+    sh "python2 " + _test_command
+  end
+
+  desc 'Run unit tests in python 3'
+  task :py3 do
+    sh "python3 " + _test_command
+  end
+
+  desc 'Run unit tests in python'
+  task :py do
+    sh "python " + _test_command
+  end
 end
+task :test => ["test:py"]
+
 
 namespace :doc do
   desc 'Build documentation'
   task :make, [:type] do |t, args|
     sh "make -C doc #{args[:type]}"
   end
+end
+task :doc do
+  Rake::Task["doc:make"].invoke "html"
 end

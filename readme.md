@@ -28,7 +28,7 @@ While still in development, the simple parsing function `_parse_email(file_loc)`
 This project uses sphinx with autodoc extensions for its documentation.
 
 ```
-rake doc:make[html]
+rake doc  # equivalent to rake doc:make[html]
 ```
 
 You can then find `index.html` at `/doc/build/html/index.html`.
@@ -39,8 +39,8 @@ You can then find `index.html` at `/doc/build/html/index.html`.
 
 
 ```bash
-rake test      # Default python
-rake test2     # Python2
-rake test3     # Python3
-rake test_all  # Python2 and Python3
+rake test      # Default python, equivalent to rake test:py
+rake test:py2  # Python2
+rake test:py3  # Python3
+rake test:all  # Python2 and Python3
 ```
