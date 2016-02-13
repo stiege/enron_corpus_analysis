@@ -1,7 +1,6 @@
 require 'rake'
 require 'net/http'
 
-
 desc 'Get the Enron data set'
 task :get_enron_data do
   if File.exists?('mail_dir')
@@ -33,3 +32,16 @@ task :get_enron_data do
     end
   end
 end
+
+desc 'Run repository unit tests in python2'
+task :test2 do
+  sh 'python2 -m unittest discover'
+end
+
+desc 'Run repository unit tests in python3'
+task :test3 do
+  sh 'python3 -m unittest discover'
+end
+
+desc 'Run repository unit tests in python 2 and 3'
+task :test => ["test2", "test3"]
