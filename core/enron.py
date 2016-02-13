@@ -1,24 +1,37 @@
 import re
 
+_known_email_metadata = [
+    "Message-ID",
+    "Date",
+    "From",
+    "To",
+    "Subject",
+    "Mime-Version",
+    "Content-Type",
+    "Content-Transfer-Encoding",
+    "X-From",
+    "X-To",
+    "X-cc",
+    "X-bcc",
+    "X-Folder",
+    "X-Origin",
+    "X-FileName"]
+
+
+def _assemble_email_from_dict(email):
+    msg = []
+    for meta in _known_email_metadata:
+        msg.append(
+            meta + ":" + email[meta])
+    msg.append(email["Content"])
+    return "".join(msg)
+
 
 def _parse_email(file_loc):
     email = {}
     with open(file_loc) as f:
-        email["Message-ID"] = f.readline().strip()
-        email["Date"] = f.readline().strip()
-        email["From"] = f.readline().strip()
-        email["To"] = f.readline().strip()
-        email["Subject"] = f.readline().strip()
-        email["Mime-Version"] = f.readline().strip()
-        email["Content-Type"] = f.readline().strip()
-        email["Content-Transfer-Encoding"] = f.readline().strip()
-        email["X-From"] = f.readline().strip()
-        email["X-To"] = f.readline().strip()
-        email["X-cc"] = f.readline().strip()
-        email["X-bcc"] = f.readline().strip()
-        email["X-Folder"] = f.readline().strip()
-        email["X-Origin"] = f.readline().strip()
-        email["X-FileName"] = f.readline().strip()
+        for meta in _known_email_metadata:
+            email[meta] = f.readline().strip()
 
         for key in email:
             if not email[key].startswith(key):

@@ -17,7 +17,7 @@ And hope that it works.
 
 ### Parsing emails
 
-The repository contains a passing unit test which shows an example of parsing a single email. This implementation will be tested against the test fixture dataset in order to prepare for it to be launched against the entire dataset.
+While still in development, the simple parsing function `_parse_email(file_loc)` is shown by unit tests to parse just over 56% of the test fixtures without loss of information.
 
 ## Discussion
 

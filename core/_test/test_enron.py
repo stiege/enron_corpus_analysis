@@ -1,11 +1,19 @@
 import unittest
 import re
 from .. import enron
+import glob2
 
+# "find . -type f | wc -l" indicates 2195 is the right number
+_test_fixture_count = 2195
+# If this changes be sure to update the readme.md for marketing purposes
+_expected_yield = 56
+
+_whitespace_regex = "[\r\n\t ]"
+_fixture_dir = "core/_test_fixtures/maildir/"
 _simple_email_location = (
-    "core/_test_fixtures/maildir/stokley-c/chris_stokley/mid_markt/19.")
+    _fixture_dir + "stokley-c/chris_stokley/mid_markt/19.")
 _simple_email_content = re.sub(
-    "[\r\n\t ]",
+    _whitespace_regex,
     "",
     """
     Chris:
@@ -27,9 +35,6 @@ _simple_email_content = re.sub(
     Thanks
     Chris
     """)
-
-_multiple_recipient_email_location = (
-    "")
 
 
 class EmailParsing(unittest.TestCase):
@@ -83,7 +88,33 @@ class EmailParsing(unittest.TestCase):
             email["X-FileName"])
         self.assertEqual(
             _simple_email_content,
-            re.sub("[\r\n\t ]", "", email["Content"]))
+            re.sub(_whitespace_regex, "", email["Content"]))
 
-    def test_can_parse_with_multiple_recipients(self):
-        pass
+    def _get_test_fixture_list(self):
+        return glob2.glob(_fixture_dir + "/**/*.")
+
+    def test_can_get_paths_to_all_test_fixtures(self):
+        # This tests our private function _get_test_fixture_list to make
+        # sure we've got the right regex etc and the result is what we expect.
+        fixture_list = self._get_test_fixture_list()
+        self.assertEqual(
+            _test_fixture_count,
+            len(fixture_list))
+
+    def test_yield_on_test_fixtures(self):
+        no_loss_of_data_count = 0
+        content = None
+        for fixture_location in self._get_test_fixture_list():
+            with open(fixture_location) as f:
+                content = "".join(f.readlines())
+            try:
+                email = enron._parse_email(fixture_location)
+                msg = enron._assemble_email_from_dict(email)
+                if (re.sub(_whitespace_regex, "", content) ==
+                        re.sub(_whitespace_regex, "", msg)):
+                    no_loss_of_data_count = no_loss_of_data_count + 1
+            except TypeError:
+                pass
+        parse_yield = float(no_loss_of_data_count)/_test_fixture_count * 100
+
+        self.assertEqual(_expected_yield, int(parse_yield))
