@@ -1,10 +1,10 @@
-# Machine Learning with the Enron Corpus
+# Data Analysis with the Enron Corpus
 
 This repository is for use with the Massey University *158.739 Introduction to Analytics* course. It uses the Enron email corpus to learn data analysis by doing data anaylsis.
 
 ## Supported features
 
-## Getting the dataset
+### Getting the dataset
 
 Try:
 
@@ -15,15 +15,17 @@ rake get_enron_data
 ```
 And hope that it works.
 
-## Parsing emails
+### Parsing emails
 
 The repository contains a passing unit test which shows an example of parsing a single email. This implementation will be tested against the test fixture dataset in order to prepare for it to be launched against the entire dataset.
 
-# Discussion
+## Discussion
 
 [![Gitter](https://badges.gitter.im/stiege/enron_corpus_analysis.svg)](https://gitter.im/stiege/enron_corpus_analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-# Testing
+## Testing
+
+[![Build Status](https://secure.travis-ci.org/stiege/enron_corpus_analysis.png)](http://travis-ci.org/stiege/enron_corpus_analysis)
 
 This repository tests with both python2 and python3. You must have `python2` and `python3` symlinked correctly or these values set as environmental variables on windows.
 
