@@ -1,7 +1,12 @@
+"""
+Enron testing module
+"""
+
 import unittest
 import re
-from .. import enron
 import glob2
+import doctest
+from .. import enron
 
 # "find . -type f | wc -l" indicates 2195 is the right number
 _test_fixture_count = 2195
@@ -38,8 +43,20 @@ _simple_email_content = re.sub(
 
 
 class EmailParsing(unittest.TestCase):
+    """
+    EmailParsing contains all tests related to email parsing correctness
+    """
+
+    def test_documentation(self):
+        """
+        Test all documented methods
+        """
+        doctest.testmod(enron, verbose=True)
 
     def test_can_parse_email(self):
+        """
+        Show how a specific email is parsed successfully
+        """
         email = enron._parse_email(_simple_email_location)
         self.assertEqual(
             "<28674844.1075858514812.JavaMail.evans@thyme>",
@@ -91,9 +108,15 @@ class EmailParsing(unittest.TestCase):
             re.sub(_whitespace_regex, "", email["Content"]))
 
     def _get_test_fixture_list(self):
+        """
+        Return a list of paths to all test fixtures
+        """
         return glob2.glob(_fixture_dir + "/**/*.")
 
     def test_can_get_paths_to_all_test_fixtures(self):
+        """
+        Check :func:`_get_test_fixture_list` result is as expected
+        """
         # This tests our private function _get_test_fixture_list to make
         # sure we've got the right regex etc and the result is what we expect.
         fixture_list = self._get_test_fixture_list()
@@ -102,6 +125,9 @@ class EmailParsing(unittest.TestCase):
             len(fixture_list))
 
     def test_yield_on_test_fixtures(self):
+        """
+        Check that no code changes result in lower correct parsing yield
+        """
         no_loss_of_data_count = 0
         content = None
         for fixture_location in self._get_test_fixture_list():

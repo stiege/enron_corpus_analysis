@@ -50,3 +50,10 @@ desc 'Run repository unit tests with default python'
 task :test do
   sh 'python -m unittest discover'
 end
+
+namespace :doc do
+  desc 'Build documentation'
+  task :make, [:type] do |t, args|
+    sh "make -C doc #{args[:type]}"
+  end
+end

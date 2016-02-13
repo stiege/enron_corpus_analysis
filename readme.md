@@ -23,9 +23,19 @@ While still in development, the simple parsing function `_parse_email(file_loc)`
 
 [![Gitter](https://badges.gitter.im/stiege/enron_corpus_analysis.svg)](https://gitter.im/stiege/enron_corpus_analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+## Documentation
+
+This project uses sphinx with autodoc extensions for its documentation.
+
+```
+rake doc:make[html]
+```
+
+You can then find `index.html` at `/doc/build/html/index.html`.
+
 ## Testing
 
-[![Build Status](https://secure.travis-ci.org/stiege/enron_corpus_analysis.png)](http://travis-ci.org/stiege/enron_corpus_analysis)
+[![Build Status](https://secure.travis-ci.org/stiege/enron_corpus_analysis.png?branch=master)](http://travis-ci.org/stiege/enron_corpus_analysis)
 
 
 ```bash
