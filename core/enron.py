@@ -84,6 +84,11 @@ def _parse_email(file_loc, allow_corrupt=False):
                     while not line_read.startswith("Subject"):
                         email[meta] = email[meta] + line_read
                         line_read = f.readline().strip()
+                elif meta == "Content-Transfer-Encoding":
+                    line_read = f.readline()
+                    while not line_read.startswith("X-From"):
+                        email[meta] = email[meta] + line_read
+                        line_read = f.readline().strip()
                 else:
                     line_read = None
 
