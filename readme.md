@@ -17,9 +17,9 @@ And hope that it works.
 
 ### Parsing emails
 
-While still in development, the simple parsing function `_parse_email(file_loc)` is shown by unit tests to parse just over 91% of the test fixtures without loss of information, and can correctly identify when it has done a poor job.
+While still in development, the simple parsing function `_parse_email(file_loc)` is shown by unit tests to parse 100% of the test fixtures without loss of information, and can correctly identify when it performs incorrectly. At the moment all fields are parsed as strings however future features will implement correct typing of the parsed data.
 
-This can be used to create a database (of arbitrary type):
+This can be used to create a database (SQLite/MySQL and others supported):
 
 ```
 rake db:create

@@ -11,8 +11,8 @@ from .. import enron
 # "find . -type f | wc -l" indicates 2195 is the right number
 _test_fixture_count = 2195
 # If this changes be sure to update the readme.md for marketing purposes
-_expected_yield = 91
-_expected_parse_count = 2008
+_expected_yield = 100
+_expected_parse_count = 2195
 
 _whitespace_regex = "[\s]"
 _fixture_dir = "core/_test_fixtures/maildir/"
@@ -146,7 +146,7 @@ class EmailParsing(unittest.TestCase):
                     failure_dict[meta] = 1
                 else:
                     failure_dict[meta] = failure_dict[meta] + 1
-                continue
+                raise AssertionError(fixture_location)
             msg = enron._assemble_email_from_dict(email)
             if (re.sub(_whitespace_regex, "", content) ==
                     re.sub(_whitespace_regex, "", msg)):
@@ -159,5 +159,4 @@ class EmailParsing(unittest.TestCase):
 
         self.assertEqual(_expected_yield, int(parse_yield))
         self.assertEqual(_expected_parse_count, no_loss_of_data_count)
-        # This is where we're failing
-        self.assertEqual({'To': 187}, failure_dict)
+        self.assertEqual({}, failure_dict)

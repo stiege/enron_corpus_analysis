@@ -70,21 +70,29 @@ def _parse_email(file_loc, allow_corrupt=False):
             if line_read is None:
                 line_read = f.readline().strip()
             if not line_read.startswith(meta) and not allow_corrupt:
-                raise AssertionError("Corrupt parse on {}".format(meta))
+                if meta == "To":
+                    # This field is missing in some emails
+                    email[meta] = None
+                    continue
+                else:
+                    raise AssertionError("Corrupt parse on {}".format(meta))
             else:
                 email[meta] = re.search(
                     meta + ":(.*)", line_read).group(1).strip()
                 if meta == "Subject":
+                    # Multiline
                     line_read = f.readline()
                     while not line_read.startswith("Mime-Version"):
                         email[meta] = email[meta] + line_read
                         line_read = f.readline().strip()
                 elif meta == "To":
+                    # Multiline
                     line_read = f.readline()
                     while not line_read.startswith("Subject"):
                         email[meta] = email[meta] + line_read
                         line_read = f.readline().strip()
                 elif meta == "Content-Transfer-Encoding":
+                    # Multiline
                     line_read = f.readline()
                     while not line_read.startswith("X-From"):
                         email[meta] = email[meta] + line_read
