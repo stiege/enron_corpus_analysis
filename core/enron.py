@@ -65,13 +65,23 @@ def _parse_email(file_loc, allow_corrupt=False):
 
     email = {}
     with open(file_loc) as f:
+        line_read = None
         for meta in _known_email_metadata:
-            line_read = f.readline().strip()
+            if line_read is None:
+                line_read = f.readline().strip()
             if not line_read.startswith(meta) and not allow_corrupt:
                 raise AssertionError("Corrupt parse on {}".format(meta))
             else:
                 email[meta] = re.search(
                     meta + ":(.*)", line_read).group(1).strip()
+                if meta == "Subject":
+                    line_read = f.readline()
+                    while not line_read.startswith("Mime-Version"):
+                        email[meta] = email[meta] + line_read
+                        line_read = f.readline().strip()
+                else:
+                    line_read = None
+
 
         msg_content = f.readlines()
         email["Content"] = "".join(msg_content)

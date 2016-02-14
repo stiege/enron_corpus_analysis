@@ -17,7 +17,7 @@ And hope that it works.
 
 ### Parsing emails
 
-While still in development, the simple parsing function `_parse_email(file_loc)` is shown by unit tests to parse just over 56% of the test fixtures without loss of information, and can correctly identify when it has done a poor job.
+While still in development, the simple parsing function `_parse_email(file_loc)` is shown by unit tests to parse just over 59% of the test fixtures without loss of information, and can correctly identify when it has done a poor job.
 
 This can be used to create a database (of arbitrary type):
 
