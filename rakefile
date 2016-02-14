@@ -55,6 +55,7 @@ namespace :test do
     sh "python " + _test_command
   end
 end
+desc 'Equivalent to test:py'
 task :test => ["test:py"]
 
 
@@ -64,6 +65,7 @@ namespace :doc do
     sh "make -C doc #{args[:type]}"
   end
 end
+desc 'Equivalent to doc:make[help]'
 task :doc do
-  Rake::Task["doc:make"].invoke "html"
+  Rake::Task["doc:make"].invoke "help"
 end

@@ -28,7 +28,8 @@ While still in development, the simple parsing function `_parse_email(file_loc)`
 This project uses sphinx with autodoc extensions for its documentation.
 
 ```
-rake doc  # equivalent to rake doc:make[html]
+rake doc  # equivalent to rake doc:make[help]
+rake doc:make[html]
 ```
 
 You can then find `index.html` at `/doc/build/html/index.html`.
@@ -44,3 +45,7 @@ rake test:py2  # Python2
 rake test:py3  # Python3
 rake test:all  # Python2 and Python3
 ```
+
+## Rakefile
+
+As may be seen, the rakefile is the correct interface to get the majority of tasks done. Available rakefile commands can be viewed at anytime with `rake -T`.
