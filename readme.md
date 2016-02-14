@@ -19,6 +19,13 @@ And hope that it works.
 
 While still in development, the simple parsing function `_parse_email(file_loc)` is shown by unit tests to parse just over 56% of the test fixtures without loss of information, and can correctly identify when it has done a poor job.
 
+This can be used to create a database (of arbitrary type):
+
+```
+rake db:create
+# Equivalent to db:create["core/_test_fixtures", "sqlite:///database.db"]
+```
+
 ## Discussion
 
 [![Gitter](https://badges.gitter.im/stiege/enron_corpus_analysis.svg)](https://gitter.im/stiege/enron_corpus_analysis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)

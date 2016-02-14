@@ -12,6 +12,7 @@ from .. import enron
 _test_fixture_count = 2195
 # If this changes be sure to update the readme.md for marketing purposes
 _expected_yield = 56
+_expected_parse_count = 1245
 
 _whitespace_regex = "[\s]"
 _fixture_dir = "core/_test_fixtures/maildir/"
@@ -150,3 +151,4 @@ class EmailParsing(unittest.TestCase):
         parse_yield = float(no_loss_of_data_count)/_test_fixture_count * 100
 
         self.assertEqual(_expected_yield, int(parse_yield))
+        self.assertEqual(_expected_parse_count, no_loss_of_data_count)
