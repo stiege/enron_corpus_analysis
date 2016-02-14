@@ -131,14 +131,21 @@ class EmailParsing(unittest.TestCase):
         """
         no_loss_of_data_count = 0
         content = None
+        failure_dict = {}
+
         for fixture_location in self._get_test_fixture_list():
             with open(fixture_location) as f:
                 content = "".join(f.readlines())
 
             try:
                 email = enron._parse_email(fixture_location)
-            except AssertionError:
+            except AssertionError as e:
                 # _parse_email() has identified this is a bad parse
+                meta = re.search("Corrupt parse on (.*)", str(e)).group(1)
+                if meta not in failure_dict:
+                    failure_dict[meta] = 1
+                else:
+                    failure_dict[meta] = failure_dict[meta] + 1
                 continue
             msg = enron._assemble_email_from_dict(email)
             if (re.sub(_whitespace_regex, "", content) ==
@@ -152,3 +159,8 @@ class EmailParsing(unittest.TestCase):
 
         self.assertEqual(_expected_yield, int(parse_yield))
         self.assertEqual(_expected_parse_count, no_loss_of_data_count)
+        # This is where we're failing
+        self.assertEqual({
+            'Mime-Version': 405,
+            'Subject': 358,
+            'To': 187}, failure_dict)

@@ -68,7 +68,7 @@ def _parse_email(file_loc, allow_corrupt=False):
         for meta in _known_email_metadata:
             line_read = f.readline().strip()
             if not line_read.startswith(meta) and not allow_corrupt:
-                raise AssertionError("Corrupt parse")
+                raise AssertionError("Corrupt parse on {}".format(meta))
             else:
                 email[meta] = re.search(
                     meta + ":(.*)", line_read).group(1).strip()
