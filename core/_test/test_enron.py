@@ -51,7 +51,7 @@ class EmailParsing(unittest.TestCase):
         """
         Test all documented methods
         """
-        doctest.testmod(enron, verbose=True)
+        doctest.testmod(enron)
 
     def test_can_parse_email(self):
         """
