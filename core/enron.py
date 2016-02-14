@@ -79,9 +79,13 @@ def _parse_email(file_loc, allow_corrupt=False):
                     while not line_read.startswith("Mime-Version"):
                         email[meta] = email[meta] + line_read
                         line_read = f.readline().strip()
+                elif meta == "To":
+                    line_read = f.readline()
+                    while not line_read.startswith("Subject"):
+                        email[meta] = email[meta] + line_read
+                        line_read = f.readline().strip()
                 else:
                     line_read = None
-
 
         msg_content = f.readlines()
         email["Content"] = "".join(msg_content)
