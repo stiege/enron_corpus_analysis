@@ -33,6 +33,10 @@ task :get_enron_data do
   end
 end
 
+task :clean do
+  FileUtils.rm_rf Dir.glob('**/**.pyc')
+end
+
 namespace :test do
 
   _test_command = "-m unittest discover"

@@ -52,7 +52,6 @@ def _parse_email(file_loc, allow_corrupt=False):
     :param allow_corrupt: Select whether a bad parse should raise an
         AssertionError or continue.
 
-
     :example:
         >>> email_path = "core/_test_fixtures/maildir/"
         >>> email_path = email_path + "stokley-c/chris_stokley/mid_markt/19."
