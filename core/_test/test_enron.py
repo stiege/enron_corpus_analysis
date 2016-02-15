@@ -6,6 +6,8 @@ import unittest
 import re
 import glob2
 import doctest
+import time
+import sys
 from .. import enron
 
 # "find . -type f | wc -l" indicates 2195 is the right number
@@ -41,6 +43,13 @@ _simple_email_content = re.sub(
     Thanks
     Chris
     """)
+
+
+def _get_test_fixture_list():
+    """
+    Return a list of paths to all test fixtures
+    """
+    return glob2.glob(_fixture_dir + "/**/*.")
 
 
 class EmailParsing(unittest.TestCase):
@@ -120,7 +129,7 @@ class EmailParsing(unittest.TestCase):
         """
         # This tests our private function _get_test_fixture_list to make
         # sure we've got the right regex etc and the result is what we expect.
-        fixture_list = self._get_test_fixture_list()
+        fixture_list = _get_test_fixture_list()
         self.assertEqual(
             _test_fixture_count,
             len(fixture_list))
@@ -133,7 +142,7 @@ class EmailParsing(unittest.TestCase):
         content = None
         failure_dict = {}
 
-        for fixture_location in self._get_test_fixture_list():
+        for fixture_location in _get_test_fixture_list():
             with open(fixture_location) as f:
                 content = "".join(f.readlines())
 
@@ -155,7 +164,7 @@ class EmailParsing(unittest.TestCase):
                 # _parse_email() failed to identify a bad parse
                 self.fail("Returned corrupt message")
 
-        parse_yield = float(no_loss_of_data_count)/_test_fixture_count * 100
+        parse_yield = float(no_loss_of_data_count) / _test_fixture_count * 100
 
         self.assertEqual(_expected_yield, int(parse_yield))
         self.assertEqual(_expected_parse_count, no_loss_of_data_count)

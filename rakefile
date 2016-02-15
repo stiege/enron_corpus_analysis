@@ -42,7 +42,7 @@ namespace :test do
   _test_command = "-m unittest discover"
 
   desc 'Run unit tests in python 2 and 3'
-  task :all => ["test:py2", "test:py3"]
+  task :all => ["test:py2", "test:py3", "test:speed"]
 
   desc 'Run unit tests in python 2'
   task :py2 do
@@ -57,6 +57,11 @@ namespace :test do
   desc 'Run unit tests in python'
   task :py do
     sh "python " + _test_command
+  end
+
+  desc 'Run speed profiling (baseline notes target python 3.5.1)'
+  task :speed do
+    sh "python " + _test_command + " -p speed_test_*"
   end
 end
 desc 'Equivalent to test:py'
