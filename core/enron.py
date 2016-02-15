@@ -15,6 +15,7 @@ _known_email_metadata = [
     "Mime-Version",
     "Content-Type",
     "Content-Transfer-Encoding",
+    "Bcc",
     "X-From",
     "X-To",
     "X-cc",
@@ -70,8 +71,8 @@ def _parse_email(file_loc, allow_corrupt=False):
             if line_read is None:
                 line_read = f.readline().strip()
             if not line_read.startswith(meta) and not allow_corrupt:
-                if meta == "To":
-                    # This field is missing in some emails
+                if meta == "To" or meta == "Bcc":
+                    # Fields are missing in some emails
                     email[meta] = None
                     continue
                 else:
@@ -91,7 +92,7 @@ def _parse_email(file_loc, allow_corrupt=False):
                     while not line_read.startswith("Subject"):
                         email[meta] = email[meta] + line_read
                         line_read = f.readline().strip()
-                elif meta == "Content-Transfer-Encoding":
+                elif meta == "Bcc":
                     # Multiline
                     line_read = f.readline()
                     while not line_read.startswith("X-From"):

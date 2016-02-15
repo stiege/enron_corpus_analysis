@@ -6,14 +6,11 @@ import unittest
 import re
 import glob2
 import doctest
-import time
-import sys
 from .. import enron
 
 # "find . -type f | wc -l" indicates 2195 is the right number
 _test_fixture_count = 2195
-# If this changes be sure to update the readme.md for marketing purposes
-_expected_yield = 100
+_expected_yield = 100  # Percent
 _expected_parse_count = 2195
 
 _whitespace_regex = "[\s]"
@@ -21,8 +18,7 @@ _fixture_dir = "core/_test_fixtures/maildir/"
 _simple_email_location = (
     _fixture_dir + "stokley-c/chris_stokley/mid_markt/19.")
 _simple_email_content = re.sub(
-    _whitespace_regex,
-    "",
+    _whitespace_regex, "",
     """
     Chris:
     I didn't exactly ask for confirmation.
@@ -43,6 +39,33 @@ _simple_email_content = re.sub(
     Thanks
     Chris
     """)
+
+_multi_to_email_location = (
+    _fixture_dir + "motley-m/inbox/75.")
+_multi_to_recipients = re.sub(
+    _whitespace_regex, "",
+    """
+    tom.alonso@enron.com, robert.anderson@enron.com, robert.badeer@enron.com,
+    serena.bishop@enron.com, jody.blackburn@enron.com,
+    james.bruce@enron.com, jim.buerkle@enron.com,
+    darren.cavanaugh@enron.com, paul.choi@enron.com, ed.clark@enron.com,
+    timothy.coffing@enron.com, m..driscoll@enron.com,
+    mo.elafandi@enron.com, caroline.emmert@enron.com,
+    fredrik.eriksson@enron.com, kenton.erwin@enron.com,
+    michael.etringer@enron.com, mark.fischer@enron.com,
+    jim.gilbert@enron.com, stan.gray@enron.com, mark.guzman@enron.com,
+    don.hammond@enron.com, e..jones@enron.com, paul.kaufman@enron.com,
+    julie.kearney@enron.com, wayne.mays@enron.com, matt.motley@enron.com,
+    p..o'neil@enron.com, jonalan.page@enron.com, todd.perry@enron.com,
+    john.postlethwaite@enron.com, mike.purcell@enron.com,
+    susan.rance@enron.com, dale.rasmussen@enron.com,
+    lester.rawson@enron.com, grace.rodriguez@enron.com,
+    stewart.rosman@enron.com, julie.sarnowski@enron.com,
+    gordon.savage@enron.com, kathryn.sheppard@enron.com,
+    g..slaughter@enron.com, virginia.thompson@enron.com,
+    bill.williams@enron.com""")
+_bcc_email_location = _multi_to_email_location
+_bcc_content = "amy.fitzpatrick@enron.com"
 
 
 def _get_test_fixture_list():
@@ -140,7 +163,6 @@ class EmailParsing(unittest.TestCase):
         """
         no_loss_of_data_count = 0
         content = None
-        failure_dict = {}
 
         for fixture_location in _get_test_fixture_list():
             with open(fixture_location) as f:
@@ -149,23 +171,36 @@ class EmailParsing(unittest.TestCase):
             try:
                 email = enron._parse_email(fixture_location)
             except AssertionError as e:
-                # _parse_email() has identified this is a bad parse
                 meta = re.search("Corrupt parse on (.*)", str(e)).group(1)
-                if meta not in failure_dict:
-                    failure_dict[meta] = 1
-                else:
-                    failure_dict[meta] = failure_dict[meta] + 1
-                raise AssertionError(fixture_location)
+                self.fail("Bad parse of {} at {}".format(
+                    meta, fixture_location))
             msg = enron._assemble_email_from_dict(email)
             if (re.sub(_whitespace_regex, "", content) ==
                     re.sub(_whitespace_regex, "", msg)):
                 no_loss_of_data_count = no_loss_of_data_count + 1
             else:
-                # _parse_email() failed to identify a bad parse
-                self.fail("Returned corrupt message")
+                self.fail("Returned corrupt message at {}".format(
+                    fixture_location))
 
         parse_yield = float(no_loss_of_data_count) / _test_fixture_count * 100
 
         self.assertEqual(_expected_yield, int(parse_yield))
         self.assertEqual(_expected_parse_count, no_loss_of_data_count)
-        self.assertEqual({}, failure_dict)
+
+    def test_parse_multiple_recipients(self):
+        """
+        Check parsing of an email with multiple recipients
+        """
+        email = enron._parse_email(_multi_to_email_location)
+        self.assertEqual(
+            _multi_to_recipients,
+            re.sub(_whitespace_regex, "", email["To"]))
+
+    def test_bcc(self):
+        """
+        Check parsing of an email with a bcc
+        """
+        email = enron._parse_email(_bcc_email_location)
+        self.assertEqual(
+            _bcc_content,
+            re.sub(_whitespace_regex, "", email["Bcc"]))
