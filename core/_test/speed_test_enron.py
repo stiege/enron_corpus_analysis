@@ -30,7 +30,7 @@ class EnronSpeedTests(unittest.TestCase):
         slowness = duration / one_time_unit
 
         if sys.version_info == (3, 5, 1, 'final', 0):
-            expected = "~1.8"
+            expected = "~1.5"
         else:
             expected = "?"
         logging.info("_parse_email slowness: {:.02f} ({})".format(

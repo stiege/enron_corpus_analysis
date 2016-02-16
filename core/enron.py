@@ -24,6 +24,11 @@ _known_email_metadata = [
     "X-Origin",
     "X-FileName"]
 
+_regex = {}
+
+for meta in _known_email_metadata:
+    _regex[meta] = re.compile(meta + ":(.*)")
+
 
 def _assemble_email_from_dict(email):
     """
@@ -78,8 +83,8 @@ def _parse_email(file_loc, allow_corrupt=False):
                 else:
                     raise AssertionError("Corrupt parse on {}".format(meta))
             else:
-                email[meta] = re.search(
-                    meta + ":(.*)", line_read).group(1).strip()
+                email[meta] = _regex[meta].search(
+                    line_read).group(1).strip()
                 if meta == "Subject":
                     # Multiline
                     line_read = f.readline()
