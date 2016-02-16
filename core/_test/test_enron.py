@@ -14,9 +14,10 @@ _expected_yield = 100  # Percent
 _expected_parse_count = 2195
 
 _whitespace_regex = "[\s]"
-_fixture_dir = "core/_test_fixtures/maildir/"
+_fixture_dir = "core/_test_fixtures/"
+_mail_fixture_dir = _fixture_dir + "maildir/"
 _simple_email_location = (
-    _fixture_dir + "stokley-c/chris_stokley/mid_markt/19.")
+    _mail_fixture_dir + "stokley-c/chris_stokley/mid_markt/19.")
 _simple_email_content = re.sub(
     _whitespace_regex, "",
     """
@@ -41,7 +42,7 @@ _simple_email_content = re.sub(
     """)
 
 _multi_to_email_location = (
-    _fixture_dir + "motley-m/inbox/75.")
+    _mail_fixture_dir + "motley-m/inbox/75.")
 _multi_to_recipients = re.sub(
     _whitespace_regex, "",
     """
@@ -67,12 +68,13 @@ _multi_to_recipients = re.sub(
 _bcc_email_location = _multi_to_email_location
 _bcc_content = "amy.fitzpatrick@enron.com"
 
+_non_utf8_location = _fixture_dir + "non_utf8"
 
 def _get_test_fixture_list():
     """
     Return a list of paths to all test fixtures
     """
-    return glob2.glob(_fixture_dir + "/**/*.")
+    return glob2.glob(_mail_fixture_dir + "/**/*.")
 
 
 class EmailParsing(unittest.TestCase):
@@ -144,7 +146,7 @@ class EmailParsing(unittest.TestCase):
         """
         Return a list of paths to all test fixtures
         """
-        return glob2.glob(_fixture_dir + "/**/*.")
+        return glob2.glob(_mail_fixture_dir + "/**/*.")
 
     def test_can_get_paths_to_all_test_fixtures(self):
         """
@@ -204,3 +206,12 @@ class EmailParsing(unittest.TestCase):
         self.assertEqual(
             _bcc_content,
             re.sub(_whitespace_regex, "", email["Bcc"]))
+
+    def test_non_utf8(self):
+        """
+        Check parsing of an email with a non-utf8 encoding
+        """
+        email = enron._parse_email(_non_utf8_location)
+        self.assertEqual(
+            "Shapiro-R",
+            re.sub(_whitespace_regex, "", email["X-Origin"]))

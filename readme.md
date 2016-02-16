@@ -6,18 +6,15 @@ This repository is for use with the Massey University *158.739 Introduction to A
 
 ### Getting the dataset
 
-Try:
-
 ```bash
 git clone https://github.com/stiege/enron_corpus_analysis.git
 cd enron_corpus_analysis
 rake get_enron_data
 ```
-And hope that it works.
 
 ### Parsing emails
 
-While still in development, the simple parsing function `_parse_email(file_loc)` is shown by unit tests to parse 100% of the test fixtures without loss of information, and can correctly identify when it performs incorrectly. At the moment all fields are parsed as strings however future features will implement correct typing of the parsed data.
+While still in development, the simple parsing function `_parse_email(file_loc)` is able to parse the entire dataset. At the moment all fields are parsed as strings however future features will implement correct typing of the parsed data.
 
 This can be used to create a database (SQLite/MySQL and others supported):
 
@@ -25,6 +22,8 @@ This can be used to create a database (SQLite/MySQL and others supported):
 rake db:create
 # Equivalent to db:create["core/_test_fixtures", "sqlite:///database.db"]
 ```
+
+`rake db:create[maildir]` (after getting the enron dataset) will take wildly different times depending on your version of python and type of hard drive you're using. Expect anywhere from 15 to 45 minutes.
 
 ## Discussion
 

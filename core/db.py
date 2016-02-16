@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sqlalchemy
 import glob2
 from sqlalchemy.ext.declarative import declarative_base
@@ -75,6 +76,9 @@ def _create_db(file_dir, engine_config="sqlite:///:memory:"):
                     ))
         except AssertionError:
             continue
+        except:
+            print("Failed on {}".format(email_loc), file=sys.stderr)
+            raise
     _session.commit()
 
 if __name__ == '__main__':

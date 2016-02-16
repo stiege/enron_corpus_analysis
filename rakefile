@@ -68,7 +68,7 @@ desc 'Equivalent to test:py'
 task :test => ["test:py"]
 
 namespace :db do
-  desc 'Highly experimental creation of a database'
+  desc 'Create a database'
   task :create, [:path, :config] do |t, args|
     args.with_defaults(
       :path => "core/_test_fixtures",

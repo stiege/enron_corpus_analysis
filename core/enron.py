@@ -6,6 +6,8 @@ dataset.
 import re
 import os
 
+import codecs
+
 _known_email_metadata = [
     "Message-ID",
     "Date",
@@ -49,14 +51,52 @@ def _assemble_email_from_dict(email):
     return "".join(msg)
 
 
-def _parse_email(file_loc, allow_corrupt=False):
+def _parse(f, email):
+    line_read = None
+    for meta in _known_email_metadata:
+        if line_read is None:
+            line_read = f.readline().strip()
+        if not line_read.startswith(meta):
+            if meta == "To" or meta == "Bcc":
+                # Fields are missing in some emails
+                email[meta] = None
+                continue
+            else:
+                raise AssertionError("Corrupt parse on {}".format(meta))
+        else:
+            email[meta] = _regex[meta].search(
+                line_read).group(1).strip()
+            if meta == "Subject":
+                # Multiline
+                line_read = f.readline()
+                while not line_read.startswith("Mime-Version"):
+                    email[meta] = email[meta] + line_read
+                    line_read = f.readline().strip()
+            elif meta == "To":
+                # Multiline
+                line_read = f.readline()
+                while not line_read.startswith("Subject"):
+                    email[meta] = email[meta] + line_read
+                    line_read = f.readline().strip()
+            elif meta == "Bcc":
+                # Multiline
+                line_read = f.readline()
+                while not line_read.startswith("X-From"):
+                    email[meta] = email[meta] + line_read
+                    line_read = f.readline().strip()
+            else:
+                line_read = None
+    msg_content = f.readlines()
+    email["Content"] = "".join(msg_content)
+    email["Content"] = email["Content"].strip()
+
+
+def _parse_email(file_loc):
     """
     _parse_email takes a path to an email that is in the common format
     of the enron dataset and parses it into a `dict`.
 
     :param file_loc: The file location to parse.
-    :param allow_corrupt: Select whether a bad parse should raise an
-        AssertionError or continue.
 
     :example:
         >>> email_path = "core/_test_fixtures/maildir/"
@@ -65,49 +105,21 @@ def _parse_email(file_loc, allow_corrupt=False):
         >>> print(email["From"])
         h..foster@enron.com
 
-    :raises: AssertionError when allow_corrupt is false and a corrupt
-        parse is encountered.
+    :raises: AssertionError when a corrupt parse is encountered.
     """
+    # Latin encoding takes much more time, so we only want to do it if
+    # we have a problem with utf-8. This is very inefficient for emails
+    # with non-utf8 characters, but there's so few it doesn't effect the
+    # speed test.
 
     email = {}
-    with open(file_loc) as f:
-        line_read = None
-        for meta in _known_email_metadata:
-            if line_read is None:
-                line_read = f.readline().strip()
-            if not line_read.startswith(meta) and not allow_corrupt:
-                if meta == "To" or meta == "Bcc":
-                    # Fields are missing in some emails
-                    email[meta] = None
-                    continue
-                else:
-                    raise AssertionError("Corrupt parse on {}".format(meta))
-            else:
-                email[meta] = _regex[meta].search(
-                    line_read).group(1).strip()
-                if meta == "Subject":
-                    # Multiline
-                    line_read = f.readline()
-                    while not line_read.startswith("Mime-Version"):
-                        email[meta] = email[meta] + line_read
-                        line_read = f.readline().strip()
-                elif meta == "To":
-                    # Multiline
-                    line_read = f.readline()
-                    while not line_read.startswith("Subject"):
-                        email[meta] = email[meta] + line_read
-                        line_read = f.readline().strip()
-                elif meta == "Bcc":
-                    # Multiline
-                    line_read = f.readline()
-                    while not line_read.startswith("X-From"):
-                        email[meta] = email[meta] + line_read
-                        line_read = f.readline().strip()
-                else:
-                    line_read = None
-
-        msg_content = f.readlines()
-        email["Content"] = "".join(msg_content)
-        email["Content"] = email["Content"].strip()
-
+    f = open(file_loc, 'r')
+    try:
+        _parse(f, email)
+    except UnicodeDecodeError:
+        email = {}
+        with codecs.open(file_loc, 'r', encoding="latin") as g:
+            _parse(g, email)
+    finally:
+        f.close()
     return email
