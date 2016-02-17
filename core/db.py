@@ -37,6 +37,27 @@ class _Email(_Base):
             self._id, self.frm, self.to, self.content)
 
 
+def _create_table(email):
+    return _Email(
+        msg_id=email["Message-ID"],
+        date=email["Date"],
+        frm=email["From"],
+        to=email["To"],
+        subject=email["Subject"],
+        mime_version=email["Mime-Version"],
+        content_type=email["Content-Type"],
+        content_transfer_encoding=email[
+            "Content-Transfer-Encoding"],
+        x_from=email["X-From"],
+        x_to=email["X-To"],
+        x_cc=email["X-cc"],
+        x_bcc=email["X-bcc"],
+        x_folder=email["X-Folder"],
+        x_origin=email["X-Origin"],
+        x_filename=email["X-FileName"],
+        content=email["Content"])
+
+
 def _create_db(file_dir, engine_config="sqlite:///:memory:"):
     """
     Recursively take all emails from a directory and insert them into a
@@ -51,34 +72,10 @@ def _create_db(file_dir, engine_config="sqlite:///:memory:"):
     Session.configure(bind=engine)
     _session = Session()
 
-    for email_loc in glob2.glob(file_dir + "/**/*."):
-        try:
-            email = enron._parse_email(email_loc)
-            _session.add(
-                _Email(
-                    msg_id=email["Message-ID"],
-                    date=email["Date"],
-                    frm=email["From"],
-                    to=email["To"],
-                    subject=email["Subject"],
-                    mime_version=email["Mime-Version"],
-                    content_type=email["Content-Type"],
-                    content_transfer_encoding=email[
-                        "Content-Transfer-Encoding"],
-                    x_from=email["X-From"],
-                    x_to=email["X-To"],
-                    x_cc=email["X-cc"],
-                    x_bcc=email["X-bcc"],
-                    x_folder=email["X-Folder"],
-                    x_origin=email["X-Origin"],
-                    x_filename=email["X-FileName"],
-                    content=email["Content"]
-                    ))
-        except AssertionError:
-            continue
-        except:
-            print("Failed on {}".format(email_loc), file=sys.stderr)
-            raise
+    email_locs = glob2.glob(file_dir + "/**/*.")
+    emails = map(enron._parse_email, email_locs)
+    tables = map(_create_table, emails)
+    _session.bulk_save_objects(tables)
     _session.commit()
 
 if __name__ == '__main__':

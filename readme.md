@@ -23,7 +23,7 @@ rake db:create
 # Equivalent to db:create["core/_test_fixtures", "sqlite:///database.db"]
 ```
 
-`rake db:create[maildir]` (after getting the enron dataset) will take wildly different times depending on your version of python and type of hard drive you're using. Expect anywhere from 15 to 45 minutes.
+`rake db:create[maildir]` (after getting the enron dataset) will take wildly different times depending on your version of python and type of hard drive you're using. Expect anywhere from 10 to 30 minutes.
 
 ## Discussion
 

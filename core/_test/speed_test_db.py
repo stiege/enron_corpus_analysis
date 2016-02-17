@@ -33,7 +33,7 @@ class DbSpeedTests(unittest.TestCase):
         slowness = duration / _one_time_unit
 
         if sys.version_info == (3, 5, 1, 'final', 0):
-            expected = "~7"
+            expected = "~4"
         else:
             expected = "?"
         logging.info("_create_db slowness: {:.02f} ({})".format(
