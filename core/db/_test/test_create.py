@@ -4,9 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import Sequence
 from sqlalchemy.orm import sessionmaker
-from .test_enron import (_fixture_dir, _expected_parse_count)
-
-from .. import db
+from .test_email_parsing import (_fixture_dir, _expected_parse_count)
+from .. import create
 
 Base = declarative_base()
 
@@ -79,9 +78,9 @@ class ModuleTests(unittest.TestCase):
     """
 
     def test_create_sql_db_in_memory(self):
-        db._create_db(
-            file_dir=_fixture_dir,
+        create._create_db(
+            file_dir=_fixture_dir + "maildir",
             engine_config="sqlite:///:memory:")
         self.assertEqual(
             _expected_parse_count,
-            db._session.query(db._Email).count())
+            create._session.query(create._Email).count())

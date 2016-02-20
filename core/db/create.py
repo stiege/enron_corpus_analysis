@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy import Sequence
 from sqlalchemy.orm import sessionmaker
 import sys
-from core import enron
+from . import _email_parsing
 
 _session = None
 _Base = declarative_base()
@@ -73,9 +73,9 @@ def _create_db(file_dir, engine_config="sqlite:///:memory:"):
     _session = Session()
 
     email_locs = glob2.glob(file_dir + "/**/*.")
-    emails = map(enron._parse_email, email_locs)
-    tables = map(_create_table, emails)
-    _session.bulk_save_objects(tables)
+    emails = map(_email_parsing._parse_email, email_locs)
+    db_entries = map(_create_table, emails)
+    _session.bulk_save_objects(db_entries)
     _session.commit()
 
 if __name__ == '__main__':

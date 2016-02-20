@@ -1,7 +1,7 @@
 import unittest
 import time
-from .. import enron
-from .test_enron import _get_test_fixture_list
+from .. import _email_parsing
+from .test_email_parsing import _get_test_fixture_list
 import logging
 import sys
 
@@ -20,7 +20,7 @@ class EnronSpeedTests(unittest.TestCase):
     def test_time_optimisation(self):
         start = time.time()
         for fixture_location in _get_test_fixture_list():
-            enron._parse_email(fixture_location)
+            _email_parsing._parse_email(fixture_location)
 
         finish = time.time()
         duration = finish - start

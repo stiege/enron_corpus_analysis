@@ -73,7 +73,7 @@ namespace :db do
     args.with_defaults(
       :path => "core/_test_fixtures",
       :config => "sqlite:///database.db")
-    sh "python -m core.db #{args[:path]} #{args[:config]}"
+    sh "python -m core.db.create #{args[:path]} #{args[:config]}"
   end
 end
 

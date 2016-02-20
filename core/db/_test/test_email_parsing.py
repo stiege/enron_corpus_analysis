@@ -6,7 +6,7 @@ import unittest
 import re
 import glob2
 import doctest
-from .. import enron
+from .. import _email_parsing
 
 # "find . -type f | wc -l" indicates 2195 is the right number
 _test_fixture_count = 2195
@@ -70,6 +70,7 @@ _bcc_content = "amy.fitzpatrick@enron.com"
 
 _non_utf8_location = _fixture_dir + "non_utf8"
 
+
 def _get_test_fixture_list():
     """
     Return a list of paths to all test fixtures
@@ -86,13 +87,13 @@ class EmailParsing(unittest.TestCase):
         """
         Test all documented methods
         """
-        doctest.testmod(enron)
+        doctest.testmod(_email_parsing)
 
     def test_can_parse_email(self):
         """
         Show how a specific email is parsed successfully
         """
-        email = enron._parse_email(_simple_email_location)
+        email = _email_parsing._parse_email(_simple_email_location)
         self.assertEqual(
             "<28674844.1075858514812.JavaMail.evans@thyme>",
             email["Message-ID"])
@@ -171,12 +172,12 @@ class EmailParsing(unittest.TestCase):
                 content = "".join(f.readlines())
 
             try:
-                email = enron._parse_email(fixture_location)
+                email = _email_parsing._parse_email(fixture_location)
             except AssertionError as e:
                 meta = re.search("Corrupt parse on (.*)", str(e)).group(1)
                 self.fail("Bad parse of {} at {}".format(
                     meta, fixture_location))
-            msg = enron._assemble_email_from_dict(email)
+            msg = _email_parsing._assemble_email_from_dict(email)
             if (re.sub(_whitespace_regex, "", content) ==
                     re.sub(_whitespace_regex, "", msg)):
                 no_loss_of_data_count = no_loss_of_data_count + 1
@@ -193,7 +194,7 @@ class EmailParsing(unittest.TestCase):
         """
         Check parsing of an email with multiple recipients
         """
-        email = enron._parse_email(_multi_to_email_location)
+        email = _email_parsing._parse_email(_multi_to_email_location)
         self.assertEqual(
             _multi_to_recipients,
             re.sub(_whitespace_regex, "", email["To"]))
@@ -202,7 +203,7 @@ class EmailParsing(unittest.TestCase):
         """
         Check parsing of an email with a bcc
         """
-        email = enron._parse_email(_bcc_email_location)
+        email = _email_parsing._parse_email(_bcc_email_location)
         self.assertEqual(
             _bcc_content,
             re.sub(_whitespace_regex, "", email["Bcc"]))
@@ -211,7 +212,7 @@ class EmailParsing(unittest.TestCase):
         """
         Check parsing of an email with a non-utf8 encoding
         """
-        email = enron._parse_email(_non_utf8_location)
+        email = _email_parsing._parse_email(_non_utf8_location)
         self.assertEqual(
             "Shapiro-R",
             re.sub(_whitespace_regex, "", email["X-Origin"]))

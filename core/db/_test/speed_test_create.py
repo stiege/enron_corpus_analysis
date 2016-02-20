@@ -1,10 +1,10 @@
 import unittest
-from .. import db
-from .test_enron import _fixture_dir
+from .. import create
+from .test_email_parsing import _fixture_dir
 import sys
 import logging
 import time
-from .speed_test_enron import _one_time_unit
+from .speed_test_email_parsing import _one_time_unit
 import os
 
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +23,7 @@ class DbSpeedTests(unittest.TestCase):
 
     def test_create_sql_db(self):
         start = time.time()
-        db._create_db(
+        create._create_db(
             file_dir=_fixture_dir,
             engine_config="sqlite:///test_db.db")
 
