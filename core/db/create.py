@@ -5,10 +5,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import Sequence
 from sqlalchemy.orm import sessionmaker
-import sys
 from . import _email_parsing
 
-_session = None
 _Base = declarative_base()
 
 
@@ -63,20 +61,17 @@ def create_db(file_dir, engine_config="sqlite:///:memory:"):
     Recursively take all emails from a directory and insert them into a
     database
     """
-    global _session
     engine = sqlalchemy.create_engine(
         engine_config)
 
     _Base.metadata.create_all(engine)
     Session = sessionmaker()
     Session.configure(bind=engine)
-    _session = Session()
+    session = Session()
 
     email_locs = glob2.glob(file_dir + "/**/*.")
     emails = map(_email_parsing._parse_email, email_locs)
     db_entries = map(_create_table, emails)
-    _session.bulk_save_objects(db_entries)
-    _session.commit()
-
-if __name__ == '__main__':
-    _create_db(sys.argv[1], sys.argv[2])
+    session.bulk_save_objects(db_entries)
+    session.commit()
+    return session

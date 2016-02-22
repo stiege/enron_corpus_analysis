@@ -78,9 +78,9 @@ class ModuleTests(unittest.TestCase):
     """
 
     def test_create_sql_db_in_memory(self):
-        create.create_db(
+        session = create.create_db(
             file_dir=_fixture_dir + "maildir",
             engine_config="sqlite:///:memory:")
         self.assertEqual(
             _expected_parse_count,
-            create._session.query(create._Email).count())
+            session.query(create._Email).count())
