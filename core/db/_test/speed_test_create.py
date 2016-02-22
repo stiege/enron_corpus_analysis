@@ -23,7 +23,7 @@ class DbSpeedTests(unittest.TestCase):
 
     def test_create_sql_db(self):
         start = time.time()
-        create._create_db(
+        create.create_db(
             file_dir=_fixture_dir,
             engine_config="sqlite:///test_db.db")
 
@@ -36,5 +36,5 @@ class DbSpeedTests(unittest.TestCase):
             expected = "~4"
         else:
             expected = "?"
-        logging.info("_create_db slowness: {:.02f} ({})".format(
+        logging.info("create_db slowness: {:.02f} ({})".format(
             slowness, expected))

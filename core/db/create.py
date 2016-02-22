@@ -58,7 +58,7 @@ def _create_table(email):
         content=email["Content"])
 
 
-def _create_db(file_dir, engine_config="sqlite:///:memory:"):
+def create_db(file_dir, engine_config="sqlite:///:memory:"):
     """
     Recursively take all emails from a directory and insert them into a
     database
