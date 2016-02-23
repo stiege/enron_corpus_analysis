@@ -12,6 +12,7 @@ def main(args):
     try:
         if args.create:
             create.create_db(args.create, args.database)
+        print("database created from {}".format(args.create))
     except:
         traceback.print_exc()
         retval = _POSIX_FAIL

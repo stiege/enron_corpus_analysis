@@ -3,10 +3,13 @@ require 'net/http'
 
 desc 'Get the Enron data set'
 task :get_enron_data do
-  if File.exists?('mail_dir')
-    puts 'mail_dir already exists'
+  # None of this script is unit tested (unlike other parts of this rakefile).
+  # Be very careful about regressions and be sure to test fully (i.e. by
+  # removing wget from PATH and testing from various stages).
+  if File.exists?('maildir')
+    puts 'maildir already exists'
     puts 'if you wish to recreate it please delete it and try again'
-    return
+    fail
   else
     unless File.exists?('enron_mail_20150507.tgz')
       sh 'wget http://www.cs.cmu.edu/~./enron/enron_mail_20150507.tgz' do |ok, res|
@@ -39,7 +42,7 @@ end
 
 namespace :test do
 
-  _test_command = "-m unittest discover"
+  _test_command = "-m unittest discover -b"
 
   desc 'Run unit tests in python 2 and 3'
   task :all => ["test:py2", "test:py3", "test:speed"]
