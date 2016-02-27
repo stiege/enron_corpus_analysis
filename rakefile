@@ -15,7 +15,7 @@ task :get_enron_data do
       sh 'wget http://www.cs.cmu.edu/~./enron/enron_mail_20150507.tgz' do |ok, res|
         unless ok
           puts 'wget not found, using rake to download'
-          puts 'this takes about 30 minutes with a good connection and you'
+          puts 'this takes about 60 minutes with a good connection and you'
           puts 'will not get a progress bar ...'
           uri = URI('http://www.cs.cmu.edu/~./enron/enron_mail_20150507.tgz')
           data_set = Net::HTTP.get(uri)
