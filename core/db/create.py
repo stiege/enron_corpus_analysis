@@ -2,21 +2,36 @@ from __future__ import print_function
 import sqlalchemy
 import glob2
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DATETIME
 from sqlalchemy import Sequence
 from sqlalchemy.orm import sessionmaker
 import sys
 from . import _email_parsing
+import pytz
+import dateutil.parser
+
 
 _session = None
 _Base = declarative_base()
+
+_TZINFOS = {
+    'PDT': pytz.timezone('US/Pacific'),
+}
+
+
+def _dateparse(date_str):
+    return dateutil.parser.parse(
+        date_str,
+        tzinfos=_TZINFOS).astimezone(
+            pytz.utc).replace(
+            tzinfo=None)
 
 
 class _Email(_Base):
     __tablename__ = 'emails'
     _id = Column(Integer, Sequence('email_id_seq'), primary_key=True)
     msg_id = Column(String)
-    date = Column(String)
+    date = Column(DATETIME)
     frm = Column(String)
     to = Column(String)
     subject = Column(String)
@@ -40,7 +55,7 @@ class _Email(_Base):
 def _create_table(email):
     return _Email(
         msg_id=email["Message-ID"],
-        date=email["Date"],
+        date=_dateparse(email["Date"]),
         frm=email["From"],
         to=email["To"],
         subject=email["Subject"],

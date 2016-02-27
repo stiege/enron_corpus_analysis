@@ -14,16 +14,16 @@ rake get_enron_data
 
 ### Parsing emails
 
-While still in development, the simple parsing function `_parse_email(file_loc)` is able to parse the entire dataset. At the moment all fields are parsed as strings however future features will implement correct typing of the parsed data.
+While still in development, the simple parsing function `_parse_email(file_loc)` is able to parse the entire dataset. While most fields are parsed as strings (for example lists of email addresses); the date of emails being sent is correctly typed in the created database in UTC time.
 
 This can be used to create a database (SQLite/MySQL and others supported):
 
-```
+```bash
 rake db:create
 # Equivalent to db:create["core/_test_fixtures", "sqlite:///database.db"]
 ```
 
-`rake db:create[maildir]` (after getting the enron dataset) will take wildly different times depending on your version of python and type of hard drive you're using. Expect anywhere from 10 to 30 minutes.
+`rake db:create[maildir]` (after getting the enron dataset) will take wildly different times depending on your version of python and type of hard drive you're using. Expect this to take up to an hour.
 
 ## Discussion
 
@@ -33,7 +33,7 @@ rake db:create
 
 This project uses sphinx with autodoc extensions for its documentation.
 
-```
+```bash
 rake doc  # equivalent to rake doc:make[help]
 rake doc:make[html]
 ```
